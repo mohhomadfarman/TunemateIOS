@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, ImageBackground } from 'react-native';
 import SplashBox from './components/SplashBox';
-import { storeData } from './Screens/Utility/asyncStorageUtils';
+import { storeData, storeLocalData } from './Screens/Utility/asyncStorageUtils';
 
 export default function SplashScreen({ navigation }) {
   useEffect(() => {

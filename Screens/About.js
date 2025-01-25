@@ -61,10 +61,12 @@ function AboutUs({ navigation }) {
   const storeUsername = async () => {
     const USER_ID = await getLocalData('UserId') 
  if (username.length > 0 && username.length <= 12) {
+  setIsLoading(true)
         dispatch(TM_Add_userName({newUsername:username,userId:USER_ID})).then((res)=>{
           if(res.payload.message){
             Alert.alert('Success', res.payload.message);
             if(res.payload){
+              setIsLoading(false)
               storeUserToken("true", "isUsername");
               navigation.navigate('ProfileStepOne')
             }

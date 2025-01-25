@@ -24,6 +24,7 @@ import Musician from './Screens/Musician';
 import AudioScreen from './Screens/AudioScreen';
 import UserChecking from './Screens/UserChecking';
 import EditProfile from './Screens/EditProfile';
+import EditDetailScreen from './Screens/EditDetailScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -100,6 +101,7 @@ function UserAuthWithToken() {
       <Tab.Screen name="Musician" component={Musician} options={{ headerShown: false }} />
       <Tab.Screen name="AudioScreen" component={AudioScreen} options={{ headerShown: false }} />
       <Tab.Screen name="editProfile" component={EditProfile} options={{ headerShown: false}} />
+      <Tab.Screen name="EditDetailScreen" component={EditDetailScreen} options={{ headerShown: false}} />
     </Tab.Navigator>
   );
 }

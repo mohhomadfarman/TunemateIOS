@@ -78,9 +78,7 @@ const HomeScreen = ({ navigation }) => {
 
     try {
       const result = await dispatch(CreateUser(userData)).unwrap();
-
       if (result?.userToken) {
-     
         await storeLocalData(result?.userToken, 'userToken');
         await storeLocalData(result?.userId, 'UserId');
         await storeLocalData('true', 'isUserCleate');
@@ -95,16 +93,6 @@ const HomeScreen = ({ navigation }) => {
     }
   };
 
-   // State variable to hold the password
-   const [password, setPassword] = useState('');
-
-   // State variable to track password visibility
-   const [showPassword, setShowPassword] = useState(false);
-
-   // Function to toggle the password visibility state
-   const toggleShowPassword = () => {
-       setShowPassword(!showPassword);
-   };
 
   return (
     <View style={styles.container}>

@@ -31,6 +31,7 @@ function MusicianTypeScreen({ navigation }) {
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [bio, setBio] = useState('');
   const [currentStep, setCurrentStep] = useState(1);
+  const [isLoader, setIsLoader] = useState(false);
 
   const [socialMediaLinks, setSocialMediaLinks] = useState({
     insta_link: '',
@@ -129,9 +130,10 @@ function MusicianTypeScreen({ navigation }) {
   const handleNavigation = useCallback(async () => {
     try {
       if (currentStep === 1) {
-
+        setIsLoader(true);
         const result = await dispatch(UpdateMusician(musicianPayload));
         if (result?.meta?.requestStatus === "fulfilled") {
+          setIsLoader(false);
           Alert.alert("Success", "Musician Has been Updated!");
           handleNext();
         } else {
@@ -140,8 +142,10 @@ function MusicianTypeScreen({ navigation }) {
 
 
       } else if (currentStep === 2) {
+        setIsLoader(true);
         const result = await dispatch(UpdateGenra(GenraPayload));
         if (result?.meta?.requestStatus === "fulfilled") {
+          setIsLoader(false);
           Alert.alert("Success", "Genre Has been Updated!");
           handleNext();
         } else {
@@ -150,16 +154,20 @@ function MusicianTypeScreen({ navigation }) {
 
 
       } else if (currentStep === 3) {
+        setIsLoader(true);
         const result = await dispatch(UpdateBio({ bio: getDetailsForDB().bio }));
         if (result?.meta?.requestStatus === "fulfilled") {
+          setIsLoader(false);
           // Alert.alert("Success", "Bio is updated");
           handleNext();
         } else {
           Alert.alert("Error", "Enter up to 50 words for Bio");
         }
       } else if (currentStep === 4) {
+        setIsLoader(true);
         const response = await dispatch(update_SocialMedia_Link(getDetailsForDB().socail));
         if (response?.payload?.status === "success") {
+          setIsLoader(false);
           Alert.alert("Success", "Social Media Links Updated");
           storeUserToken("true", "isStepTwoComplete");
           navigation.navigate("SplashScreenFour");
@@ -183,7 +191,7 @@ function MusicianTypeScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      {isLoading ? (
+      {(isLoading || isLoader) ? (
         <Loader />
       ) : (
         <ImageBackground source={require('../Assets/bg.jpg')} resizeMode="cover" style={styles.Image}>
