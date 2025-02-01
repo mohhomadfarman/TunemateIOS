@@ -1,10 +1,13 @@
 import React, { useRef, useState } from 'react';
 import { View, StyleSheet, PanResponder, Animated, ScrollView, Dimensions } from 'react-native';
+import Profile from '../Screens/Profile';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 // Custom swipeable carousel component
 const SwipeCarousel = ({ cards }) => {
+
+
   const pan = useRef(new Animated.ValueXY()).current;
   const opacity = useRef(new Animated.Value(1)).current;  // Opacity value for fade animation
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -51,7 +54,7 @@ const SwipeCarousel = ({ cards }) => {
 
   return (
     <View style={styles.container}>
-      {cards.map((card, index) => {
+      {cards?.map((card, index) => {
         if (index === currentIndex) {
           return (
             <Animated.View
@@ -67,7 +70,7 @@ const SwipeCarousel = ({ cards }) => {
                 styles.card
               ]}
             >
-              {card.text}
+              <Profile profile={card?.text} />
             </Animated.View>
           );
         }
@@ -77,15 +80,15 @@ const SwipeCarousel = ({ cards }) => {
   );
 };
 
-// Example Profile component with scrollable content
-const Profile = () => {
-  return (
-    <ScrollView contentContainerStyle={styles.profileContent}>
-      {/* Replace with your scrollable content */}
-      <View style={styles.dummyContent} />
-    </ScrollView>
-  );
-};
+// // Example Profile component with scrollable content
+// const Profile = () => {
+//   return (
+//     <ScrollView contentContainerStyle={styles.profileContent}>
+//       {/* Replace with your scrollable content */}
+//       <View style={styles.dummyContent} />
+//     </ScrollView>
+//   );
+// };
 
 const styles = StyleSheet.create({
   container: {

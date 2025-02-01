@@ -3,7 +3,7 @@ import { getLocalData } from '../Screens/Utility/asyncStorageUtils';
 // import { baseURL } from '../config/config';
 // import { getToken } from '../Utils/auth';
 
-export const NewBaseURL = "https://emht92r6ib.execute-api.ap-south-1.amazonaws.com/Tunemate"
+export const NewBaseURL = "https://emht92r6ib.execute-api.ap-south-1.amazonaws.com/Tunemate/"
 const baseURL = "https://uy5ykkqpfc.execute-api.ap-south-1.amazonaws.com/Tunemate/"
 
 export const axiosInstance = axios.create({

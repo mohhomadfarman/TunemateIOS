@@ -68,6 +68,7 @@ function AboutUs({ navigation }) {
             if(res.payload){
               setIsLoading(false)
               storeUserToken("true", "isUsername");
+              storeUserToken(username, "Username");
               navigation.navigate('ProfileStepOne')
             }
           }

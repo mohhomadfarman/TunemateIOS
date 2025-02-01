@@ -25,6 +25,7 @@ import AudioScreen from './Screens/AudioScreen';
 import UserChecking from './Screens/UserChecking';
 import EditProfile from './Screens/EditProfile';
 import EditDetailScreen from './Screens/EditDetailScreen';
+import FillterMatch from './Screens/FillterMatch';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -40,7 +41,7 @@ const TAB_ICONS = {
 function ProfileTabNavigator({ hiddenTab }) {
   return (
     <Tab.Navigator
-      initialRouteName="Profile"
+      initialRouteName="User"
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => (
           <Image
@@ -86,6 +87,8 @@ function UserAuth() {
 
 function UserAuthWithToken() {
 
+  // AsyncStorage.removeItem('isStepTwoComplete');
+
   return (
     <Tab.Navigator
       initialRouteName="Signup"
@@ -102,6 +105,7 @@ function UserAuthWithToken() {
       <Tab.Screen name="AudioScreen" component={AudioScreen} options={{ headerShown: false }} />
       <Tab.Screen name="editProfile" component={EditProfile} options={{ headerShown: false}} />
       <Tab.Screen name="EditDetailScreen" component={EditDetailScreen} options={{ headerShown: false}} />
+      <Tab.Screen name="FillterMatch" component={FillterMatch} options={{ headerShown: false}} />
     </Tab.Navigator>
   );
 }

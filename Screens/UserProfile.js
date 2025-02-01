@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Image,
   ImageBackground,
@@ -12,6 +12,10 @@ import Sound from 'react-native-sound';
 import { useFocusEffect } from '@react-navigation/native';
 import { horizontalScale, moderateScale, verticalScale } from '../Metrics';
 import { isIOS } from '../Platform';
+import { useDispatch, useSelector } from 'react-redux';
+import { getUserProfile } from '../redux/UserSlice';
+import Loader from '../components/Loader';
+
 
 const AudioRow = ({ playSound, icon }) => (
   <View style={styles.audioBox}>
@@ -24,7 +28,20 @@ const AudioRow = ({ playSound, icon }) => (
 
 function UserProfile({ navigation }) {
   const [sound, setSound] = useState(null);
-  
+  const [loading,setLoading] = useState(false);
+  const [profile,setProfile] = useState(null);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    setLoading(true);
+    dispatch(getUserProfile()).then((res) => {
+      setProfile(res?.payload);
+      setLoading(false);
+    })
+  }, []);
+
+
+
 
   const playSound = () => {
     const soundInstance = new Sound(
@@ -69,9 +86,9 @@ function UserProfile({ navigation }) {
     navigation.navigate('editProfile');
     console.log('Navigating to Edit Profile');
   };
-
   return (
-    <ImageBackground
+    loading ?<Loader/>
+:    <ImageBackground
       source={require('../Assets/bg.jpg')}
       resizeMode="cover"
       style={styles.image}
@@ -104,7 +121,7 @@ function UserProfile({ navigation }) {
                 { paddingBottom: 0, fontWeight: '400', fontSize: 14 },
               ]}
             >
-              @Username
+              {profile?.username}
             </Text>
             <View
               style={{
@@ -113,10 +130,15 @@ function UserProfile({ navigation }) {
                 width: '100%',
               }}
             >
-              <Text style={styles.rolesText}>Vocalist |</Text>
-              <Text style={styles.rolesText}>Producer |</Text>
-              <Text style={styles.rolesText}>Rapper |</Text>
-              <Text style={styles.rolesText}>Bassist</Text>
+             {profile?.musicianDetails?.map((item, index) => (
+              item?.musicianType !== null && (
+                <Text key={index} style={styles.rolesText}>
+                  {item?.musicianType} {index !== profile?.musicianDetails.length - 1 ? "   |" : ""}
+                </Text>
+              )
+            ))}
+
+             
             </View>
             <View
               style={{
@@ -144,8 +166,7 @@ function UserProfile({ navigation }) {
 
             <View style={styles.bio}>
               <Text style={styles.Biotext}>
-                I’m a 23-year-old pop and RnB artist. I’ve released 2 songs, and
-                I love to post singing covers on TikTok. I love to collaborate.
+               {profile?.bio}
               </Text>
             </View>
             <View
@@ -163,9 +184,11 @@ function UserProfile({ navigation }) {
               />
               <Text style={{ fontSize: 12, color: '#fff', fontWeight: '600' }}>
                 {[
-                  'instagram.com/@username',
-                  'instagram.com/@username',
-                  'instagram.com/@username',
+                    profile?.insta_link || "N/A",
+                    profile?.soundcloud_link || "N/A",
+                    profile?.spotify_link || "N/A",
+                    profile?.tiktok_link || "N/A",
+                    profile?.youtube_link || "N/A",
                 ]
                   .slice(0, 1)
                   .map((item) => item)}{' '}

@@ -67,7 +67,7 @@ function User({ navigation }) {
               <Text style={styles.TextWhite}>Filter your matches</Text>
             </TouchableOpacity>
             <Text style={styles.TxtDivide}>OR</Text>
-            <TouchableOpacity style={[styles.FilterBox,{ backgroundColor:"#544fb0",}]}>
+            <TouchableOpacity style={[styles.FilterBox,{ backgroundColor:"#544fb0",}]} onPress={() => navigation.navigate('FillterMatch')}> 
               <Text style={styles.TextWhite}>Get randomly matched</Text>
             </TouchableOpacity>
           </View>

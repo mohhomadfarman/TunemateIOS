@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Dimensions, textInputSocial, ImageBackground, Modal, Pressable } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Dimensions, textInputSocial, ImageBackground, Modal, Pressable, Alert } from 'react-native';
 import { horizontalScale, moderateScale, verticalScale } from '../Metrics';
 import { Image } from 'react-native';
 import { TextInput } from 'react-native';
@@ -7,74 +7,65 @@ import { TextInput } from 'react-native';
 import DocumentPicker from 'react-native-document-picker';
 import { isAndroid } from '../Platform';
 import Popup from '../components/Popup';
-import { storeData } from './Utility/asyncStorageUtils';
+import { getLocalData, storeData } from './Utility/asyncStorageUtils';
+import { useDispatch, useSelector } from 'react-redux';
+import { Get_Genre, GetMusician } from '../redux/UserSlice';
 const { width } = Dimensions.get('window');
 
-// if (isAndroid) {
-//   console.log("Running on Android");
-// Sound.setCategory('Playback');
 
-// } else {
-//   console.log("Running on iOS");
-// }
 
 function MusicianTypeScreen2({navigation}) {
-    const [selectedTypes, setSelectedTypes] = useState([]);
-    const [currentStep, setCurrentStep] = useState(1); // Stepper state
-    const [bio, setBio] = useState(''); // State for bio input
-  
-    const [sound, setSound] = useState(null);
-    const [audioUri, setAudioUri] = useState(null);
-    const [modalVisible, setModalVisible] = useState(false);
-    const [data, setData] = useState(null); // Store async data here
+  const [currentStep, setCurrentStep] = useState(1);
+  const MusicianLists = useSelector((state) => state?.Users?.GetMusicianLists?.musician_types);
+  const GenreLists = useSelector((state) => state?.Users?.Get_GenreLists?.genres);
+  const isLoading = useSelector((state) => state?.Users?.loading);
 
 
-    const toggleSelection = (type) => {
-      if (selectedTypes.includes(type)) {
-        setSelectedTypes(selectedTypes.filter(t => t !== type));
-      } else {
-        setSelectedTypes([...selectedTypes, type]);
-      }
-    };
-  
-    // Musician types with steps
-    const musicianTypes = {
-      Step1: [
-        ["Vocalist", "Songwriter"],
-        ["Beatmaker", "Producer"],
-        ["DJ", "Rapper"],
-        ["Engineer", "Sound Designer"],
-        ["Remixer", "Band/Group"],
-            ["Pianist", "Bassist"],
-        ["Wind Player", "String Player"],
-        ["Orchestrator", "Composer"],
-        ["Conductor", "Guitarist"],
-        ["Drummer"], 
-      ],
-      Step2: [
-        ["Pop", "RnB"],
-        ["Hip-hop", "Trap"],
-        ["Drill", "EDM"],
-        ["Jazz", "Country"],
-        ["Indie", "Lofi"],
-        ["K-pop", "Latin"],
-        ["Afrobeats", "Reggae"],
-        ["Opera", "Classical"],
-        ["Choral","Ethnic Pop"],
-        ["Hindustani","Heavy Metal"],
-
-      ],
-  
-    };
-  
-    // Titles for each step
-    const stepTitles = {
-      1: "What type of musician are you looking for?",
-      2: "What genre are you looking for?",
-
-
-    };
+  const dispatch = useDispatch();
   // Handle next and back buttons
+   useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const isStep2 = await getLocalData('isStepTwoComplete');
+          if(isStep2 === "true"){
+            navigation.navigate('SplashScreenFour');
+          }
+        const musicianData =  await dispatch(GetMusician());
+        if(musicianData?.payload?.message){
+        //  Alert("Error", musicianData?.payload?.message);
+         MusicianLists=[];
+        }
+        console.log(musicianData?.payload?.message)
+          await dispatch(Get_Genre());
+  
+  
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      };
+  
+      fetchData();
+    }, [dispatch]);
+  
+    const toggleSelection = useCallback((type, isGenre, item) => {
+      const setter = isGenre ? setSelectedGenres : setSelectedMusicians;
+      setter((prev) => {
+        const isSelected = prev.includes(type);
+        if (isSelected) {
+          return prev.filter((t) => t !== type);
+        } else if (prev.length < 7) {
+          return [...prev, type];
+        } else {
+          Alert.alert('Error', 'Select only 7 items');
+          return prev;
+        }
+      });
+  
+    }, []);
+
+
+    console.log(MusicianLists)
+  
   const handleNext = () => {
     if (currentStep) {
       setCurrentStep(currentStep + 1);
@@ -99,80 +90,61 @@ const NextFetch = async() =>{
   return (
     <View style={styles.container}>
     <ImageBackground source={require('../Assets/bg.jpg')} resizeMode="cover" style={styles.Image}>
-
+        
         <Text style={styles.title}>{stepTitles[currentStep]}</Text>
-        {/* <Pressable
-        style={[styles.button, styles.buttonOpen]}
-        onPress={() => setModalVisible(true)}>
-        <Text style={styles.textStyle}>Show Modal</Text>
-      </Pressable> */}
 
-            <>
-               <Text style={styles.subtitle}>Pick up to 7</Text>
-              <ScrollView contentContainerStyle={styles.contentContainer} style={{width:"100%",height:"100%"}}>
-
-              {musicianTypes[`Step${currentStep}`]?.map((pair, index) => (
-                  <View key={index} style={styles.row}>
-                    {pair?.map((type) => (
-                      <TouchableOpacity
-                        key={type}
-                        style={[styles.button, selectedTypes.includes(type) ? styles.buttonSelected : null]}
-                        onPress={() => toggleSelection(type)}
-                      >
-                        <Text style={[styles.buttonText, selectedTypes.includes(type) ? styles.buttonTextSelected : null]}>{type}</Text>
-                      </TouchableOpacity>
-                    ))}
-                  
-                  </View>
-              ))}
-
-
-              
-                </ScrollView>
-
-            </>
-    
-
-<View style={styles.footer}>
-         
-<TouchableOpacity style={[styles.footerButton]} onPress={currentStep === 1 ? ()=>navigation.navigate('ProfileTab') : handleBack} >
-            <Text style={styles.footerText}>Back</Text>
-          </TouchableOpacity>
-
-     
-         <TouchableOpacity 
-           style={styles.footerButton} 
-           onPress={currentStep ===2 ? ()=> NextFetch() : handleNext}
-         >
-           <Text style={styles.footerText}> Continue</Text>
-         </TouchableOpacity>
-       </View>
-       <TouchableOpacity style={styles.link}>
-         <Text style={styles.linkText}>Don't see your musicianship? Click here</Text>
-       </TouchableOpacity> 
-
-   
-      {/* </ScrollView> */}
-    </ImageBackground>
-    <View style={styles.centeredView}>
-    <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
-          setModalVisible(!modalVisible);
-        }}>
- <View style={styles.modalView}>
-          <Popup close={() => setModalVisible(!modalVisible)} Title="hello" />
-
-           
-          </View>
-        </Modal>
+        <ScrollView contentContainerStyle={styles.contentContainer}>
+          {currentStep === 1 &&
+                       <View style={{ flexDirection: "row", flexWrap: "wrap", flex: 1, gap: 0, justifyContent: "center" }}>
+                        {MusicianLists?.map((item) => (
+                          <TouchableOpacity
+                            key={item?._id}
+                            style={[styles.button, selectedMusicians.includes(item?._id) && styles.buttonSelected]}
+                            onPress={() => toggleSelection(item?._id, false, item)}
+                          >
+                            <Text
+                              style={[
+                                styles.buttonText,
+                                selectedMusicians.includes(item?._id) && styles.buttonTextSelected,
+                              ]}
+                            >
+                              {item?.musician_type}
+                            </Text>
+                          </TouchableOpacity>
+                        )
+        
+        
+                        )}
+                      </View>
+                    }
+                    {currentStep === 2 &&
+                      <View style={{ flexDirection: "row", flexWrap: "wrap", flex: 1, gap: 0, justifyContent: "center" }}>
+                        {GenreLists?.map((item) => (
+                          <TouchableOpacity
+                            key={item?.document_id}
+                            style={[styles.button, selectedGenres.includes(item?.document_id) && styles.buttonSelected]}
+                            onPress={() => toggleSelection(item?.document_id, true, item)}
+                          >
+                            <Text
+                              style={[
+                                styles.buttonText,
+                                selectedGenres.includes(item?.document_id) && styles.buttonTextSelected,
+                              ]}
+                            >
+                              {item?.genreType}
+                            </Text>
+                          </TouchableOpacity>
+                        ))}
+                      </View>
+                    }
+            </ScrollView>
+       </ImageBackground>
         </View>
-  </View>
   )
 }
+
+
+const stepTitles = { 1: "What type of musician are you?", 2: "What genre describes you?", 3: "Matched Profiles"};
 
 
 const styles = StyleSheet.create({

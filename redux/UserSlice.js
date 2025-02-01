@@ -11,12 +11,26 @@ export const UserLogin = createAsyncThunk('UserLogin',async (payload) => {
   })
 
   export const CreateUser = createAsyncThunk('CreateUser',async (payload) => {
-    const response = await axiosInstance.post(`user_registration`,payload);
+    const response = await axiosInstance.post(`/user_registration`,payload);
       return response.data;
   })
 
 
-  const AUTH_BASE_URL = 'https://8er51l4g37.execute-api.ap-south-1.amazonaws.com/Tunemate';
+
+  export const getUserProfile = createAsyncThunk('getUserProfile', async (payload, { rejectWithValue }) => {
+    try {
+      const axiosInstance = await createAxiosInstance(NewBaseURL); // Create instance with base URL
+      const response = await  axiosInstance.get('/get_userprofile');
+      return response.data; // Return response on success
+    } catch (error) {
+      // Gracefully handle errors
+      if (error.response) {
+        return rejectWithValue(error.response.data); // Server-side error
+      }
+      return rejectWithValue(error.message); // Client-side or network error
+    }
+  });
+
 
 export const TM_Add_userName = createAsyncThunk('TM_Add_userName', async (payload, { rejectWithValue }) => {
   try {
@@ -32,7 +46,6 @@ export const TM_Add_userName = createAsyncThunk('TM_Add_userName', async (payloa
   }
 });
   
-const GetMusicianURL = 'https://32ejd4lkxe.execute-api.ap-south-1.amazonaws.com/Tunemate'
 
 export const GetMusician = createAsyncThunk('GetMusician', async (payload, { rejectWithValue }) => {
   try {
@@ -49,7 +62,6 @@ export const GetMusician = createAsyncThunk('GetMusician', async (payload, { rej
 });
   
 
-const Get_GenreURL = 'https://n3x360dg9k.execute-api.ap-south-1.amazonaws.com/Tunemate'
 
 export const Get_Genre = createAsyncThunk('Get_Genre', async (payload, { rejectWithValue }) => {
   try {
@@ -66,7 +78,6 @@ export const Get_Genre = createAsyncThunk('Get_Genre', async (payload, { rejectW
 });
   
 
-const UpdateBioURL = 'https://9exyhjakii.execute-api.ap-south-1.amazonaws.com/Tunemate'
 
 export const UpdateBio = createAsyncThunk('UpdateBio', async (payload, { rejectWithValue }) => {
   try {
@@ -84,7 +95,6 @@ export const UpdateBio = createAsyncThunk('UpdateBio', async (payload, { rejectW
   
 
 
-const update_SocialMedia_LinkURL = 'https://ctpw1zqi2j.execute-api.ap-south-1.amazonaws.com/Tunemate'
 
 export const update_SocialMedia_Link = createAsyncThunk('UpdateBio', async (payload, { rejectWithValue }) => {
   try {
@@ -101,7 +111,6 @@ export const update_SocialMedia_Link = createAsyncThunk('UpdateBio', async (payl
 });
 
 
-const updateMusician = "https://kk0dq61s9h.execute-api.ap-south-1.amazonaws.com/Tunemate"
   
 
 export const UpdateMusician = createAsyncThunk('UpdateMusician', async (payload, { rejectWithValue }) => {
@@ -118,7 +127,6 @@ export const UpdateMusician = createAsyncThunk('UpdateMusician', async (payload,
   }
 });
 
-const updateGenra = 'https://s9g38qba7b.execute-api.ap-south-1.amazonaws.com/Tunemate'
   
 
 export const UpdateGenra = createAsyncThunk('UpdateGenra', async (payload, { rejectWithValue }) => {
@@ -137,6 +145,25 @@ export const UpdateGenra = createAsyncThunk('UpdateGenra', async (payload, { rej
 
 
 
+export const RendomMatch = createAsyncThunk('RendomMatch', async (payload, { rejectWithValue }) => {
+ const APiUrl = 'https://x1uoa6yi89.execute-api.ap-south-1.amazonaws.com/Tunemate/';
+  try {
+    const axiosInstance = await createAxiosInstance(APiUrl); // Create instance with base URL
+    const response = await axiosInstance.get('/TM_Similar_Profile');
+    return response.data; // Return response on success
+  } catch (error) {
+    // Gracefully handle errors
+    if (error.response) {
+      return rejectWithValue(error.response.data); // Server-side error
+    }
+    return rejectWithValue(error.message); // Client-side or network error
+  }
+});
+
+
+
+
+
 
   const userSlice = createSlice({
     name: 'user',
@@ -149,6 +176,7 @@ export const UpdateGenra = createAsyncThunk('UpdateGenra', async (payload, { rej
       userCreated:null,
       GetMusicianLists:null,
       Get_GenreLists:null,
+      profile: null,
       message: '', 
     },
     reducers: {
@@ -162,6 +190,39 @@ export const UpdateGenra = createAsyncThunk('UpdateGenra', async (payload, { rej
     },
     extraReducers: (builder) => {
       builder
+
+      //find simmilar profile
+      .addCase(RendomMatch.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(RendomMatch.fulfilled, (state, action) => {
+        state.loading = false;
+        state.profile = action.payload;
+      }
+      )
+      .addCase(RendomMatch.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      }
+      )
+
+      // getuser Deatils 
+
+      .addCase(getUserProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getUserProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.profile = action.payload;
+      }
+      )
+      .addCase(getUserProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      }
+      )
         // Get user profile
         .addCase(UserLogin.pending, (state) => {
           state.loading = true;

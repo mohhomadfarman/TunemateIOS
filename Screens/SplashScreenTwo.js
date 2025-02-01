@@ -32,7 +32,7 @@ function SplashScreenTwo({ navigation }) {
        Route={()=>navigation.navigate('ProfileStepTwo')}
        LogoImage={require('../Assets/LogoMusic.png')}
        meinTitle="Step 1 Complete"
-       SubTitle={`Welcome,`}
+       SubTitle={`Welcome, ${data}`}
        SubTitle2={data}
        subStyle={styles}
        />

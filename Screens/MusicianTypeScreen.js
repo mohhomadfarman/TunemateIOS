@@ -113,7 +113,7 @@ function MusicianTypeScreen({ navigation }) {
 
   const transformArray = (key, arr) => {
     return arr.map((id) => ({
-      key: id,
+      musicianTypeId: id,
     }));
   };
 
@@ -128,6 +128,7 @@ function MusicianTypeScreen({ navigation }) {
   };
 
   const handleNavigation = useCallback(async () => {
+
     try {
       if (currentStep === 1) {
         setIsLoader(true);
@@ -204,7 +205,7 @@ function MusicianTypeScreen({ navigation }) {
           {/* <ScrollView contentContainerStyle={styles.contentContainer}> */}
           <KeywordAvoidingContent contentStyle={styles.contentContainer} width="100%">
             {currentStep === 1 &&
-              <View style={{ flexDirection: "row", flexWrap: "wrap", flex: 1, gap: 0, justifyContent: "center" }}>
+               <View style={{ flexDirection: "row", flexWrap: "wrap", flex: 1, gap: 0, justifyContent: "center" }}>
                 {MusicianLists?.map((item) => (
                   <TouchableOpacity
                     key={item?._id}

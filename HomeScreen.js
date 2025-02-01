@@ -78,6 +78,7 @@ const HomeScreen = ({ navigation }) => {
 
     try {
       const result = await dispatch(CreateUser(userData)).unwrap();
+      console.log(result)
       if (result?.userToken) {
         await storeLocalData(result?.userToken, 'userToken');
         await storeLocalData(result?.userId, 'UserId');
