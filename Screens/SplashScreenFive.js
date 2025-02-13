@@ -3,15 +3,17 @@ import { ImageBackground, StyleSheet, Text, View } from 'react-native'
 import SplashBox from '../components/SplashBox'
 import { moderateScale } from '../Metrics';
 import { storeData } from './Utility/asyncStorageUtils';
+import { AuthProvider } from '../AppNavigator';
 
 function SplashScreenFive({navigation}) {
   const NextFetch = async() =>{
     await storeData("2"); 
-   navigation.navigate('ProfileTab')
+   navigation.navigate('User')
   }
   
 
   return (
+    <AuthProvider>
     <ImageBackground source={require('../Assets/bg.jpg')} resizeMode="cover" style={styles.background}>
     <View  style={styles.container}>
         <SplashBox
@@ -25,6 +27,7 @@ function SplashScreenFive({navigation}) {
     </View>
 
 </ImageBackground>
+</AuthProvider>
   )
 }
 

@@ -7,7 +7,7 @@ const EditDetailScreen = ({ route, navigation }) => {
 
   const handleSave = () => {
     Alert.alert('Saved!', `${field} has been updated to "${input}".`);
-    navigation.goBack();
+    navigation.navigate('editProfile');
   };
 
   return (

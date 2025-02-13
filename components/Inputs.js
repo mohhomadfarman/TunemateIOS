@@ -1,7 +1,7 @@
 import { Text, TextInput, useColorScheme, View } from "react-native";
 import { getStyles } from "../Screens/Style/style";
 
-const TextInputField = ({ label, placeholder,onChangeText,secureTextEntry })=> {
+const TextInputField = ({ label, placeholder,onChangeText,secureTextEntry,rightIcon,inputStyles})=> {
 
     const scheme = useColorScheme();
     const styles = getStyles(scheme);
@@ -12,10 +12,11 @@ const TextInputField = ({ label, placeholder,onChangeText,secureTextEntry })=> {
       <TextInput
         secureTextEntry={secureTextEntry}
         placeholderTextColor={scheme === 'dark' ? 'lightgray' : 'lightgray'}
-        style={styles.input}
+        style={[styles.input,{inputStyles}]}
         placeholder={placeholder}
         onChangeText={onChangeText}
       />
+      {rightIcon && rightIcon}
     </View>
     )};
 

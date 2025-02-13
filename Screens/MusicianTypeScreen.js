@@ -45,9 +45,12 @@ function MusicianTypeScreen({ navigation }) {
   const MusicianLists = useSelector((state) => state?.Users?.GetMusicianLists?.musician_types);
   const GenreLists = useSelector((state) => state?.Users?.Get_GenreLists?.genres);
   const isLoading = useSelector((state) => state?.Users?.loading);
-
+  const CleanerStoreage = async (item) =>{
+    await AsyncStorage.removeItem(item)
+  }
 
   useEffect(() => {
+    CleanerStoreage('isStepTwoComplete');
     const fetchData = async () => {
       try {
         const isStep2 = await getLocalData('isStepTwoComplete');
@@ -59,7 +62,6 @@ function MusicianTypeScreen({ navigation }) {
       //  Alert("Error", musicianData?.payload?.message);
        MusicianLists=[];
       }
-      console.log(musicianData?.payload?.message)
         await dispatch(Get_Genre());
 
 
@@ -111,22 +113,26 @@ function MusicianTypeScreen({ navigation }) {
     socail: { ...socialMediaLinks }, // Include the social media links
   });
 
-  const transformArray = (key, arr) => {
+  const transformArray = ( arr) => {
     return arr.map((id) => ({
       musicianTypeId: id,
     }));
   };
 
+  const transformArray2 = (arr) => {
+    return arr.map((id) => ({
+      genreId: id,
+    }));
+  };
 
   const musicianPayload = {
     musicianChoice: "predefined",
-    musicians: transformArray('musicianTypeId', selectedMusicians),
+    musicians: transformArray(selectedMusicians),
   };
   const GenraPayload = {
     genreChoice: "predefined",
-    genres: transformArray('genreId', selectedGenres),
+    genres: transformArray2(selectedGenres),
   };
-
   const handleNavigation = useCallback(async () => {
 
     try {
@@ -159,6 +165,7 @@ function MusicianTypeScreen({ navigation }) {
         const result = await dispatch(UpdateBio({ bio: getDetailsForDB().bio }));
         if (result?.meta?.requestStatus === "fulfilled") {
           setIsLoader(false);
+         
           // Alert.alert("Success", "Bio is updated");
           handleNext();
         } else {
@@ -166,7 +173,7 @@ function MusicianTypeScreen({ navigation }) {
         }
       } else if (currentStep === 4) {
         setIsLoader(true);
-        const response = await dispatch(update_SocialMedia_Link(getDetailsForDB().socail));
+        const response = await dispatch(update_SocialMedia_Link(socialMediaLinks));
         if (response?.payload?.status === "success") {
           setIsLoader(false);
           Alert.alert("Success", "Social Media Links Updated");

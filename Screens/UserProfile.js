@@ -32,13 +32,17 @@ function UserProfile({ navigation }) {
   const [profile,setProfile] = useState(null);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    setLoading(true);
-    dispatch(getUserProfile()).then((res) => {
-      setProfile(res?.payload);
-      setLoading(false);
-    })
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchProfile = async () => {
+        setLoading(true);
+        const response = await dispatch(getUserProfile());
+        setProfile(response?.payload || null);
+        setLoading(false);
+      };
+      fetchProfile();
+    }, [dispatch])
+  );
 
 
 
@@ -84,7 +88,6 @@ function UserProfile({ navigation }) {
 
   const EditProfileTab = () => {
     navigation.navigate('editProfile');
-    console.log('Navigating to Edit Profile');
   };
   return (
     loading ?<Loader/>
@@ -133,7 +136,7 @@ function UserProfile({ navigation }) {
              {profile?.musicianDetails?.map((item, index) => (
               item?.musicianType !== null && (
                 <Text key={index} style={styles.rolesText}>
-                  {item?.musicianType} {index !== profile?.musicianDetails.length - 1 ? "   |" : ""}
+                  {item?.musicianType} {index !== profile?.musicianDetails.length - 1 ? "  | " : ""}
                 </Text>
               )
             ))}
@@ -149,7 +152,7 @@ function UserProfile({ navigation }) {
                 marginBottom: 10,
               }}
             >
-              {['Pop', 'RnB', 'Heavy Metal', 'House', 'Afrobeats'].map(
+              {profile?.userGenres.map(
                 (genre, index) => (
                   <Text
                     key={index}
@@ -158,7 +161,7 @@ function UserProfile({ navigation }) {
                       { fontWeight: '600', fontSize: 14 },
                     ]}
                   >
-                    {genre}
+                    {genre?.genreType}
                   </Text>
                 )
               )}

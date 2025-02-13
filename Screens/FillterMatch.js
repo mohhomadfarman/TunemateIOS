@@ -53,7 +53,6 @@ function FillterMatch({ navigation }) {
   }, [dispatch]);
 
   
-  console.log(profiles,"profiles")
   // Cards are conditionally populated based on profiles data
   const cards = profiles?.similar_profiles?.length > 0 
     ? profiles?.similar_profiles?.map((profile, index) => ({
@@ -66,7 +65,6 @@ function FillterMatch({ navigation }) {
         { id: 3, text: <Profile /> },
       ];
 
-      console.log(cards,'cardscards')
 
   return (
     <ImageBackground

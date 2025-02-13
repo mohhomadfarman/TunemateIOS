@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Platform } from 'react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
+import { ClearDtaa } from './Utility/asyncStorageUtils';
 
 const EditProfile = ({ navigation }) => {
   const [profilePicture, setProfilePicture] = useState(null);
@@ -13,9 +14,7 @@ const EditProfile = ({ navigation }) => {
 
     launchImageLibrary(options, (response) => {
       if (response.didCancel) {
-        console.log('User cancelled image picker');
       } else if (response.errorCode) {
-        console.error('Image Picker Error:', response.errorMessage);
         Alert.alert('Error', 'Could not select an image. Please try again.');
       } else if (response.assets && response.assets.length > 0) {
         const selectedImage = response.assets[0];
@@ -27,12 +26,16 @@ const EditProfile = ({ navigation }) => {
   const handleNavigation = (field, value) => {
     navigation.navigate('EditDetailScreen', { field, value });
   };
+  const LogOut = async () =>{
+    await ClearDtaa();
+    navigation.navigate('UserAuth');
+  }
 
   return (
     <View style={styles.container}>
       {/* Back Button */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Profile')}>
           <Text style={styles.backButtonText}>{Platform.OS === 'ios' ? '‹ Back' : 'Back'}</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Edit Profile</Text>
@@ -69,6 +72,10 @@ const EditProfile = ({ navigation }) => {
         </TouchableOpacity>
         <TouchableOpacity style={styles.listItem} onPress={() => handleNavigation('Genre', '')}>
           <Text style={styles.listLabel}>Genre</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={[styles.listItem,{color:"red"}]} onPress={() => LogOut()}>
+          <Text style={styles.listLabel}>Logout</Text>
         </TouchableOpacity>
       </View>
     </View>

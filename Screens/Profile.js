@@ -29,18 +29,7 @@ const AudioRow = ({ playSound, icon }) => (
 function Profile({ profile, navigation }) {
   const [sound, setSound] = useState(null);
   const [loading,setLoading] = useState(false);
-  console.log(profile,"profileprofileprofile")
-  // const [profile,setProfile] = useState(null);
   const dispatch = useDispatch();
-
-  // useEffect(() => {
-  //   setLoading(true);
-  //   dispatch(getUserProfile()).then((res) => {
-  //     setProfile(res?.payload);
-  //     setLoading(false);
-  //   })
-  // }, []);
-
 
 
 

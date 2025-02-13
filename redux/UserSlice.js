@@ -96,7 +96,7 @@ export const UpdateBio = createAsyncThunk('UpdateBio', async (payload, { rejectW
 
 
 
-export const update_SocialMedia_Link = createAsyncThunk('UpdateBio', async (payload, { rejectWithValue }) => {
+export const update_SocialMedia_Link = createAsyncThunk('update_SocialMedia_Link', async (payload, { rejectWithValue }) => {
   try {
     const axiosInstance = await createAxiosInstance(NewBaseURL); // Create instance with base URL
     const response = await axiosInstance.post('/update_socialmedia', payload);
@@ -148,7 +148,7 @@ export const UpdateGenra = createAsyncThunk('UpdateGenra', async (payload, { rej
 export const RendomMatch = createAsyncThunk('RendomMatch', async (payload, { rejectWithValue }) => {
  const APiUrl = 'https://x1uoa6yi89.execute-api.ap-south-1.amazonaws.com/Tunemate/';
   try {
-    const axiosInstance = await createAxiosInstance(APiUrl); // Create instance with base URL
+    const axiosInstance = await createAxiosInstance(NewBaseURL); // Create instance with base URL
     const response = await axiosInstance.get('/TM_Similar_Profile');
     return response.data; // Return response on success
   } catch (error) {

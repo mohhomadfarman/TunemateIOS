@@ -5,50 +5,48 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
-  KeyboardAvoidingView,
-  Platform,
-  useColorScheme,
   ImageBackground,
+  useColorScheme,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { CreateUser } from './redux/UserSlice';
 import { horizontalScale, verticalScale } from './Metrics';
-import KeywordAvoidingContent from './components/KeywordAvoidingContent';
-import Loader from './components/Loader';
 import TextInputField from './components/Inputs';
 import { getStyles } from './Screens/Style/style';
 import { getLocalData, storeLocalData } from './Screens/Utility/asyncStorageUtils';
+import KeywordAvoidingContent from './components/KeywordAvoidingContent';
+import Loader from './components/Loader';
 
-const HomeScreen = ({ navigation }) => {
+const SignupScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const scheme = useColorScheme();
   const styles = getStylesPage(scheme);
   const globalStyles = getStyles(scheme);
 
   const { status, error } = useSelector((state) => state.Users);
-
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
   const [isLoading, setIsLoading] = useState(false);
 
-  // Fetch and verify user token
-  const fetchUserToken = async () => {
-    setIsLoading(true);
-    const isUserCreated = await getLocalData('isUserCleate');
-    const storedToken = await getLocalData('userToken');
-
-    console.log(isUserCreated,storedToken)
-
-    if (isUserCreated === 'true' && storedToken) {
-      navigation.navigate('UserAuthWithToken');
-    } else if (storedToken) {
-      navigation.navigate('UserAuth');
-    }
-    setIsLoading(false);
-  };
-
   useEffect(() => {
-    fetchUserToken();
-  }, []);
+    React.useCallback(()=>{
+      const checkUserSession = async () => {
+        setIsLoading(true);
+        const isUserCreated = await getLocalData('isUserCleate');
+        const storedToken = await getLocalData('userToken');
+  
+        if (isUserCreated === 'true' && storedToken) {
+          navigation.replace('UserAuthWithToken');
+        } else if (storedToken) {
+          navigation.replace('UserAuth');
+        }
+        setIsLoading(false);
+      };
+  
+      checkUserSession();
+    },[])
+  
+  });
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -59,8 +57,8 @@ const HomeScreen = ({ navigation }) => {
     if (!name.trim()) return showAlert('Validation Error', 'Name is required.');
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
       return showAlert('Validation Error', 'Enter a valid email address.');
-    if (password.length < 6)
-      return showAlert('Validation Error', 'Password must be at least 6 characters.');
+    if (password.length < 6 || password.length > 10)
+      return showAlert('Validation Error', 'Password must be between 6 and 10 characters.');
     return true;
   };
 
@@ -78,12 +76,11 @@ const HomeScreen = ({ navigation }) => {
 
     try {
       const result = await dispatch(CreateUser(userData)).unwrap();
-      console.log(result)
       if (result?.userToken) {
-        await storeLocalData(result?.userToken, 'userToken');
-        await storeLocalData(result?.userId, 'UserId');
+        await storeLocalData('userToken', result?.userToken);
+        await storeLocalData('UserId', result?.userId);
         await storeLocalData('true', 'isUserCleate');
-        fetchUserToken();
+        navigation.replace('UserAuthWithToken');
       } else {
         showAlert('Error', 'Something went wrong!');
       }
@@ -93,7 +90,6 @@ const HomeScreen = ({ navigation }) => {
       setIsLoading(false);
     }
   };
-
 
   return (
     <View style={styles.container}>
@@ -128,11 +124,16 @@ const HomeScreen = ({ navigation }) => {
               <TextInputField
                 label="Password"
                 placeholder="*******"
-                secureTextEntry={true}
+                secureTextEntry={!showPassword}
                 value={formData.password}
                 onChangeText={(value) => handleInputChange('password', value)}
+                rightIcon={
+                  <TouchableOpacity style={styles.hideBtn} onPress={() => setShowPassword(!showPassword)}>
+                    <Text>{showPassword ? 'HIDE' : 'SHOW'}</Text>
+                  </TouchableOpacity>
+                }
               />
-              
+
               <TouchableOpacity style={styles.btnSignup} onPress={handleSignup}>
                 <Text style={styles.btnSignupText}>Signup</Text>
               </TouchableOpacity>
@@ -160,6 +161,12 @@ const getStylesPage = (scheme) =>
       width: '100%',
       justifyContent: 'center',
       alignItems: 'center',
+    },
+    hideBtn: {
+      position: 'absolute',
+      right: 20,
+      top: 50,
+      zIndex: 9999,
     },
     btnSignup: {
       alignItems: 'center',
@@ -200,4 +207,4 @@ const getStylesPage = (scheme) =>
     },
   });
 
-export default HomeScreen;
+export default SignupScreen;

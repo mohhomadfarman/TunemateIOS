@@ -102,7 +102,6 @@ function AboutUs({ navigation }) {
       }
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
-        console.log('User cancelled the picker');
       } else {
         console.error('DocumentPicker Error:', err);
       }

@@ -9,6 +9,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { moderateScale, verticalScale } from '../Metrics';
 import SubHeadingTextLine from '../components/SubHeadingTextLine';
 import AudioUpload from '../components/AudioUpload';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const { width } = Dimensions.get('window');
 
 
@@ -81,7 +82,7 @@ function Musician({navigation}) {
         });
       }
     };
-  
+
     // Use React Navigation's focus and unfocus hooks
     useFocusEffect(
       React.useCallback(() => {
@@ -91,7 +92,9 @@ function Musician({navigation}) {
         // Stop sound when screen is unfocused (navigating away)
         return () => {
           stopSound();
+         
         };
+        
       }, [])
     );
   

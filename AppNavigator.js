@@ -121,7 +121,7 @@ function AppNavigator() {
       const userToken = await getLocalData('userToken');
       const isUserCleate = await getLocalData('isUserCleate');
       const isUsername = await getLocalData('isUsername');
-      console.log(userToken)
+   
       // setIsSignedIn(!!userToken);
     };
     fetchUserToken();
@@ -149,3 +149,189 @@ function AppNavigator() {
 }
 
 export default AppNavigator;
+
+
+
+// import React, { useState, useEffect, createContext, useContext } from 'react';
+// import { NavigationContainer } from '@react-navigation/native';
+// import { createNativeStackNavigator } from '@react-navigation/native-stack';
+// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+// import Loader from './components/Loader';
+// import AboutUs from './Screens/About';
+// import SplashScreenTwo from './Screens/SplashScreenTwo';
+// import SplashScreenThree from './Screens/SplashScreenThree';
+// import MusicianTypeScreen from './Screens/MusicianTypeScreen';
+// import Forget from './Screens/Forget';
+// import Login from './Screens/Login';
+// import HomeScreen from './HomeScreen';
+// import SplashScreen from './SplashScreen';
+// import Notification from './Screens/Notification';
+// import User from './Screens/User';
+// import UserProfile from './Screens/UserProfile';
+// import MusicianTypeScreen2 from './Screens/MusicianTypeScreen2';
+// import SplashScreenFive from './Screens/SplashScreenFive';
+// import SplashScreenFour from './Screens/SplashScreenFour';
+// import Musician from './Screens/Musician';
+// import AudioScreen from './Screens/AudioScreen';
+// import FillterMatch from './Screens/FillterMatch';
+// import SignupScreen from './HomeScreen';
+
+// // Import your screens here
+// // ... existing imports ...
+
+// const Stack = createNativeStackNavigator();
+// const Tab = createBottomTabNavigator();
+
+// // Create auth context
+// const AuthContext = createContext(null);
+
+// // Auth provider component
+// export const AuthProvider = ({ children }) => {
+//   const [authState, setAuthState] = useState({
+//     isLoading: true,
+//     isSignedIn: false,
+//     isOnboarded: false,
+//     token: null
+//   });
+
+//   useEffect(() => {
+//     checkAuthState();
+//   }, []);
+
+//   const checkAuthState = async () => {
+//     try {
+//       const [token, isUserComplete, isFinalSubmit, username] = await Promise.all([
+//         AsyncStorage.getItem('userToken'),
+//         AsyncStorage.getItem('isUserComplete'),
+//         AsyncStorage.getItem('isFinalSubmit'),
+//         AsyncStorage.getItem('isUsername')
+//       ]);
+
+//       setAuthState({
+//         isLoading: false,
+//         isSignedIn: !!token,
+//         isOnboarded: !!(token && isUserComplete && username && isFinalSubmit),
+//         token
+//       });
+//     } catch (error) {
+//       console.error('Auth state check failed:', error);
+//       setAuthState({
+//         isLoading: false,
+//         isSignedIn: false,
+//         isOnboarded: false,
+//         token: null
+//       });
+//     }
+//   };
+
+//   const authContext = {
+//     ...authState,
+//     signIn: async (token) => {
+//       await AsyncStorage.setItem('userToken', token);
+//       setAuthState(prev => ({
+//         ...prev,
+//         isSignedIn: true,
+//         token
+//       }));
+//     },
+//     signOut: async () => {
+//       await AsyncStorage.multiRemove(['userToken', 'isUserComplete', 'isUsername']);
+//       setAuthState({
+//         isLoading: false,
+//         isSignedIn: false,
+//         isOnboarded: false,
+//         token: null
+//       });
+//     },
+//     completeOnboarding: async () => {
+//       await AsyncStorage.setItem('isUserComplete', 'true');
+//       setAuthState(prev => ({
+//         ...prev,
+//         isOnboarded: true
+//       }));
+//     }
+//   };
+
+//   if (authState.isLoading) {
+//     return <Loader />;
+//   }
+
+//   return (
+//     <AuthContext.Provider value={authContext}>
+//       {children}
+//     </AuthContext.Provider>
+//   );
+// };
+
+// // Protected route wrapper
+// const ProtectedRoute = ({ children }) => {
+//   const { isSignedIn, isOnboarded } = useContext(AuthContext);
+
+//   if (!isSignedIn) {
+//     return <AuthStack />;
+//   }
+
+//   if (!isOnboarded) {
+//     return <OnboardingStack />;
+//   }
+
+//   return children;
+// };
+
+// // Auth stack (public routes)
+// const AuthStack = () => (
+//   <Stack.Navigator screenOptions={{ headerShown: false }}>
+//     <Stack.Screen name="SplashScreen" component={SplashScreen} />
+//     <Stack.Screen name="HomeScreen" component={SignupScreen} />
+//     <Stack.Screen name="Login" component={Login} />
+//     <Stack.Screen name="Forget" component={Forget} />
+//   </Stack.Navigator>
+// );
+
+// // Onboarding stack (protected but not fully onboarded)
+// const OnboardingStack = () => (
+//   <Stack.Navigator screenOptions={{ headerShown: false }}>
+//     <Stack.Screen name="Signup" component={AboutUs}  />
+//     <Stack.Screen name="ProfileStepOne" component={SplashScreenTwo}  />
+//     <Stack.Screen name="ProfileStepTwo" component={SplashScreenThree}  />
+//     <Stack.Screen name="MusicianTypeScreen" component={MusicianTypeScreen}  />
+//     <Stack.Screen name="MusicianTypeScreen2" component={MusicianTypeScreen2}  />
+//     <Stack.Screen name="SplashScreenFive" component={SplashScreenFive}  />
+//     <Stack.Screen name="SplashScreenFour" component={SplashScreenFour}  />
+//     <Stack.Screen name="Musician" component={Musician}  />
+//     <Stack.Screen name="AudioScreen" component={AudioScreen}  />
+
+//     <Tab.Screen name="FillterMatch" component={FillterMatch}  />
+//     {/* ... other onboarding screens ... */}
+//   </Stack.Navigator>
+// );
+
+// // Main app stack (fully protected routes)
+// const MainAppStack = () => (
+//   <Tab.Navigator
+//     screenOptions={({ route }) => ({
+//       // ... your existing tab navigator options ...
+//     })}
+//   >
+//     <Tab.Screen name="Notification" component={Notification} />
+//     <Tab.Screen name="User"  component={User} />
+//     <Tab.Screen name="Profile" component={UserProfile} />
+//     {/* ... other protected screens ... */}
+//   </Tab.Navigator>
+// );
+
+// // Root navigator
+// const AppNavigator = () => {
+//   return (
+//     <AuthProvider>
+//       <NavigationContainer>
+//         <ProtectedRoute>
+//           <MainAppStack />
+//         </ProtectedRoute>
+//       </NavigationContainer>
+//     </AuthProvider>
+//   );
+// };
+
+// export default AppNavigator;v c

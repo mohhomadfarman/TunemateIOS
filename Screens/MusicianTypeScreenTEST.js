@@ -14,13 +14,11 @@ const MusicianTypeScreen = ({navigation}) => {
   useEffect(() => {
     const fetchData = async () => {
       const result = await checkData(navigation);
-      console.log(result)
       setData(result);  // Update the state
      
     };
     if(data==="1"){
       setCurrentStep(1);
-      console.log(currentStep,"currentStep")
 
     }
     fetchData();

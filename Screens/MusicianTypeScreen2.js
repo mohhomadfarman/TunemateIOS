@@ -35,7 +35,6 @@ function MusicianTypeScreen2({navigation}) {
         //  Alert("Error", musicianData?.payload?.message);
          MusicianLists=[];
         }
-        console.log(musicianData?.payload?.message)
           await dispatch(Get_Genre());
   
   
@@ -64,7 +63,6 @@ function MusicianTypeScreen2({navigation}) {
     }, []);
 
 
-    console.log(MusicianLists)
   
   const handleNext = () => {
     if (currentStep) {
